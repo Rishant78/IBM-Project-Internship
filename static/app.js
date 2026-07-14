@@ -721,6 +721,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // -------------------------------------------------------------
     let simulatorInitialized = false;
 
+    function updateRangeValueText(id, value) {
+        const display = document.getElementById(`val-${id}`);
+        if (!display) return;
+        
+        if (id === "SuccessRate" || id === "AvgLevelPassRate") {
+            display.textContent = Math.round(value * 100) + "%";
+        } else if (id === "TotalPlayTime") {
+            display.textContent = value + "m";
+        } else if (id === "AverageLevelDuration" || id === "AvgMetaDuration" || id === "AvgWinningDuration") {
+            display.textContent = value + "s";
+        } else {
+            display.textContent = value;
+        }
+    }
+
     function initSimulatorCharts() {
         if (simulatorInitialized) return;
         
