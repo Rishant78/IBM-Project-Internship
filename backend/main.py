@@ -82,8 +82,8 @@ def startup_event():
         df_seq.sort_index(inplace=True)
         logger.info(f"Loaded level sequence: {len(df_seq)} rows.")
     except Exception as e:
-        logger.error(f"Error loading level sequence CSV: {e}")
-        raise RuntimeError(f"Could not load level sequence CSV: {e}")
+        logger.warning(f"Could not load data/level_seq.csv: {e}. Timeline chart details will be empty.")
+        df_seq = None
         
     logger.info("API Started and fully active.")
 
@@ -362,7 +362,7 @@ def get_player_details(user_id: int):
     """
     Returns player profile, history sequence, and compiles a dynamic rule-based AI Insight message.
     """
-    if df_report is None or df_seq is None or df_meta is None:
+    if df_report is None or df_meta is None:
         raise HTTPException(status_code=500, detail="Data not loaded.")
         
     user_row = df_report[df_report["user_id"] == user_id]
@@ -397,10 +397,12 @@ def get_player_details(user_id: int):
     clean_player["AI_Insight"] = ai_insight
 
     # Fetch attempts history sequence
-    try:
-        user_seq = df_seq.loc[[user_id]] if user_id in df_seq.index else pd.DataFrame()
-    except KeyError:
-        user_seq = pd.DataFrame()
+    user_seq = pd.DataFrame()
+    if df_seq is not None:
+        try:
+            user_seq = df_seq.loc[[user_id]] if user_id in df_seq.index else pd.DataFrame()
+        except KeyError:
+            user_seq = pd.DataFrame()
         
     attempts = []
     if not user_seq.empty:
