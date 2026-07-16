@@ -1,10 +1,10 @@
 /* Design System & Custom Variables */
 :root {
-    --bg-main: #0B0F19;
-    --bg-card: rgba(19, 26, 38, 0.7);
-    --bg-card-hover: rgba(24, 34, 51, 0.85);
-    --bg-sidebar: #0e111d;
-    --border-color: rgba(0, 229, 255, 0.18);
+    --bg-main: #08111F;
+    --bg-card: rgba(17, 28, 45, 0.75);
+    --bg-card-hover: rgba(22, 35, 56, 0.9);
+    --bg-sidebar: #0C1726;
+    --border-color: rgba(0, 229, 255, 0.15);
     --border-hover: rgba(0, 229, 255, 0.35);
     
     --text-primary: #FFFFFF;
@@ -745,19 +745,40 @@ body {
 }
 
 .filter-group select {
-    padding: 0.6rem 1rem;
-    background-color: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--border-color);
+    padding: 0.6rem 2.5rem 0.6rem 1rem;
+    background-color: #111C2D;
+    border: 1px solid rgba(0, 229, 255, 0.20);
     border-radius: 10px;
-    color: var(--text-primary);
+    color: #FFFFFF;
     font-family: var(--font-primary);
     font-size: 0.9rem;
     transition: var(--transition-fast);
     outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300E5FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
 }
 
 .filter-group select:focus {
     border-color: var(--color-primary);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+}
+
+.filter-group select option {
+    background-color: #111C2D;
+    color: #FFFFFF;
+    padding: 10px;
+}
+
+.filter-group select option:hover,
+.filter-group select option:focus,
+.filter-group select option:active {
+    background-color: #162338 !important;
+    color: #00E5FF !important;
 }
 
 /* Datagrid Table Wrapper & Elements */
@@ -776,7 +797,7 @@ body {
 }
 
 .player-table th {
-    background-color: #0F1520;
+    background-color: #0C1726;
     padding: 1rem;
     font-weight: 700;
     color: var(--text-secondary);
@@ -797,11 +818,11 @@ body {
 }
 
 .player-table tbody tr:nth-child(even) {
-    background-color: #0F1520;
+    background-color: #0D1522;
 }
 
 .player-table tbody tr:nth-child(odd) {
-    background-color: #131A26;
+    background-color: #111C2D;
 }
 
 .player-table tbody tr:hover {
@@ -1666,7 +1687,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #131A26;
+    background: #111C2D;
 }
 
 ::-webkit-scrollbar-thumb {

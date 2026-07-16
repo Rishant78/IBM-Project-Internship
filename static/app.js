@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Moderately Engaged": "#06b6d4", 
                 "Low Engagement": "#f59e0b", 
                 "High Churn Risk": "#f43f5e"
-            }[k] || "#6366f1";
+            }[k] || "#00E5FF";
         });
 
         const segmentsOpt = {
