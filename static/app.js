@@ -446,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 toolbar: { show: false },
                 animations: { enabled: true, speed: 600 }
             },
-            colors: ['#6366f1'],
+            colors: ['#00E5FF'],
             stroke: { curve: 'smooth', width: 3 },
             fill: {
                 type: 'gradient',
@@ -761,7 +761,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 animations: { enabled: true, speed: 600 }
             },
             series: [0],
-            colors: ["#6366f1"],
+            colors: ["#00E5FF"],
             plotOptions: {
                 radialBar: {
                     startAngle: -110,
@@ -1053,7 +1053,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     borderRadius: 4
                 }
             },
-            colors: ['#6366f1'],
+            colors: ['#00E5FF'],
             series: [{
                 name: 'Importance Score (%)',
                 data: importancePct
@@ -1076,7 +1076,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return `
                         <div class="chart-tooltip-panel" style="padding: 10px; font-family: Outfit; max-width: 250px;">
                             <strong style="color: #fff;">${w.globals.labels[dataPointIndex]}</strong><br>
-                            Weight: <span style="color: #a855f7; font-weight:700;">${series[seriesIndex][dataPointIndex]}%</span><br>
+                            Weight: <span style="color: #00E5FF; font-weight:700;">${series[seriesIndex][dataPointIndex]}%</span><br>
                             <span style="font-size: 0.78rem; color: #9ca3af; line-height: 1.3; display:inline-block; margin-top: 4px;">${desc}</span>
                         </div>
                     `;
@@ -1236,7 +1236,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 fontFamily: 'Outfit, sans-serif',
                 toolbar: { show: false }
             },
-            colors: ['#6366f1', '#a855f7'],
+            colors: ['#00E5FF', '#AAB3C5'],
             series: [{
                 name: 'This Player (Normalized)',
                 data: playerVals.map(v => Math.round(v))
@@ -1292,7 +1292,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 toolbar: { show: false }
             },
             stroke: { width: [0, 3], curve: 'smooth' },
-            colors: ['#6366f1', '#a855f7'],
+            colors: ['#00E5FF', '#00B8D9'],
             series: [{
                 name: 'Attempt Duration (Sec)',
                 type: 'column',
@@ -1348,7 +1348,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 bar: {
                     columnWidth: '50%',
                     borderRadius: 4,
-                    colors: { ranges: [{ from: 0, to: 10000, color: '#6366f1' }] }
+                    colors: { ranges: [{ from: 0, to: 10000, color: '#00E5FF' }] }
                 }
             }
         };
