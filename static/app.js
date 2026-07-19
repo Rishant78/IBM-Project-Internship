@@ -804,7 +804,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const avgMetaDuration = parseFloat(document.getElementById("sim-AvgMetaDuration").value);
         const avgWinningDuration = parseFloat(document.getElementById("sim-AvgWinningDuration").value);
 
+        // Training derives SuccessRate from an integer count of successful levels.
+        // Keep these two dependent features internally consistent for small samples.
         const successfulLevels = Math.round(levelsPlayed * successRate);
+        const effectiveSuccessRate = successfulLevels / levelsPlayed;
         const helpRate = helpUsed / levelsPlayed;
         const restartRate = restartCount / levelsPlayed;
         const timePerSuccess = successfulLevels > 0 ? totalPlayTimeSec / successfulLevels : 0.0;
@@ -816,7 +819,7 @@ document.addEventListener("DOMContentLoaded", () => {
             AverageLevelDuration: avgDuration,
             HelpUsed: helpUsed,
             RestartCount: restartCount,
-            SuccessRate: successRate,
+            SuccessRate: effectiveSuccessRate,
             HelpRate: helpRate,
             RestartRate: restartRate,
             TimePerSuccess: timePerSuccess,

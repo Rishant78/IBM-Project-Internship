@@ -44,6 +44,7 @@ FEATURE_NAMES = [
     'TimePerSuccess', 'AvgLevelPassRate', 'AvgMetaDuration', 'AvgRetryRate',
     'AvgWinningDuration'
 ]
+CHURN_CLASS = 1
 
 @app.on_event("startup")
 def startup_event():
@@ -53,6 +54,16 @@ def startup_event():
     # Load ML Model
     try:
         model = joblib.load("model/player_engagement_model.pkl")
+        # The serialized estimator is the source of truth for its input contract.
+        # Fail at startup instead of silently scoring a different model artifact.
+        model_feature_names = list(getattr(model, "feature_names_in_", []))
+        if model_feature_names != FEATURE_NAMES:
+            raise ValueError(
+                "Model feature contract does not match the API contract. "
+                f"Model: {model_feature_names}; API: {FEATURE_NAMES}"
+            )
+        if CHURN_CLASS not in model.classes_:
+            raise ValueError(f"Model does not expose churn class {CHURN_CLASS}: {model.classes_}")
         logger.info("Model loaded successfully from model/player_engagement_model.pkl.")
     except Exception as e:
         logger.error(f"Error loading RandomForest model pickle: {e}")
@@ -507,11 +518,14 @@ def predict_churn(req: PredictionRequest):
     
     try:
         # Run prediction probabilities
+        prediction = model.predict(input_data)[0]
         probs = model.predict_proba(input_data)[0]
-        prob = float(probs[1]) # Churn Probability
-        
-        # Confidence is the max probability between classes
-        confidence_val = float(max(probs))
+        churn_index = int(np.where(model.classes_ == CHURN_CLASS)[0][0])
+        prediction_index = int(np.where(model.classes_ == prediction)[0][0])
+        prob = float(probs[churn_index])
+
+        # Confidence is the probability assigned to the model's predicted class.
+        confidence_val = float(probs[prediction_index])
         
         engagement_score = float((1.0 - prob) * 100.0)
         
