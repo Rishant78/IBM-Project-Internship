@@ -1,0 +1,4 @@
+# These source archives are not needed at runtime. The API already treats the
+# full sequence dataset as optional, retaining all dashboard/model functions.
+archive/
+data/level_seq.csv
