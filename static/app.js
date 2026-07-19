@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let probabilityChart = null;
     let simulatorGauge = null;
     let levelsScatterChart = null;
-    let playerTimelineChart = null;
     let featureImportanceChart = null;
     let playerRadarChart = null;
 
@@ -50,10 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
         SuccessRate: document.getElementById("sim-SuccessRate")
     };
     const btnRunSim = document.getElementById("btn-run-simulation");
+    const simulatorPlayerContext = document.getElementById("simulator-player-context");
 
     // Modal Elements
     const playerModal = document.getElementById("player-modal");
     const btnCloseModal = document.getElementById("btn-close-modal");
+    const btnLoadPlayerSimulator = document.getElementById("btn-load-player-simulator");
+    let loadedSimulatorPlayerId = null;
 
     // Initialize Page Clock
     updateClock();
@@ -730,10 +732,41 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (id === "TotalPlayTime") {
             display.textContent = value + "m";
         } else if (id === "AverageLevelDuration" || id === "AvgMetaDuration" || id === "AvgWinningDuration") {
-            display.textContent = value + "s";
+            display.textContent = `${Number(value).toFixed(1)}s`;
         } else {
-            display.textContent = value;
+            display.textContent = Number(value).toFixed(2).replace(/\.00$/, "");
         }
+    }
+
+    function setSimulatorPlayerContext(userId = null) {
+        loadedSimulatorPlayerId = userId;
+        simulatorPlayerContext.hidden = userId === null;
+        simulatorPlayerContext.textContent = userId === null ? "" : `Simulating Player #${userId}`;
+    }
+
+    function loadPlayerIntoSimulator(player) {
+        const simulatorValues = {
+            LevelsPlayed: player.LevelsPlayed,
+            SuccessRate: player.SuccessRate,
+            TotalPlayTime: player.TotalPlayTime / 60,
+            HelpUsed: player.HelpUsed,
+            RestartCount: player.RestartCount,
+            AverageLevelDuration: player.AverageLevelDuration,
+            AvgLevelPassRate: player.AvgLevelPassRate,
+            AvgRetryRate: player.AvgRetryRate,
+            AvgMetaDuration: player.AvgMetaDuration,
+            AvgWinningDuration: player.AvgWinningDuration
+        };
+
+        Object.entries(simulatorValues).forEach(([id, value]) => {
+            simInputs[id].value = value;
+            updateRangeValueText(id, value);
+        });
+
+        setSimulatorPlayerContext(player.user_id);
+        closePlayerProfile();
+        switchTab("simulator");
+        showToast("Player data loaded successfully. Ready to run AI simulation.", "success");
     }
 
     function initSimulatorCharts() {
@@ -749,6 +782,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const input = document.getElementById(`sim-${id}`);
             input.addEventListener("input", () => {
                 updateRangeValueText(id, input.value);
+                if (loadedSimulatorPlayerId !== null) setSimulatorPlayerContext();
             });
         });
 
@@ -784,7 +818,6 @@ document.addEventListener("DOMContentLoaded", () => {
         simulatorGauge.render();
         
         simulatorInitialized = true;
-        runSimulation();
     }
 
     btnRunSim.addEventListener("click", () => {
@@ -1148,7 +1181,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function populatePlayerModal(data) {
         const p = data.profile;
-        const history = data.history;
         const medians = data.community_medians;
 
         document.getElementById("modal-stat-played").textContent = p.LevelsPlayed;
@@ -1157,6 +1189,11 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("modal-stat-avg-duration").textContent = Math.round(p.AverageLevelDuration) + "s";
         document.getElementById("modal-stat-help").textContent = p.HelpUsed;
         document.getElementById("modal-stat-restarts").textContent = Math.round(p.RestartCount);
+        document.getElementById("modal-stat-avg-pass-rate").textContent = (p.AvgLevelPassRate * 100).toFixed(1) + "%";
+        document.getElementById("modal-stat-avg-retry-rate").textContent = p.AvgRetryRate.toFixed(2);
+        document.getElementById("modal-stat-avg-meta-duration").textContent = Math.round(p.AvgMetaDuration) + "s";
+        document.getElementById("modal-stat-avg-winning-duration").textContent = Math.round(p.AvgWinningDuration) + "s";
+        btnLoadPlayerSimulator.onclick = () => loadPlayerIntoSimulator(p);
 
         const badge = document.getElementById("modal-category");
         badge.textContent = p.EngagementCategory;
@@ -1226,7 +1263,6 @@ document.addEventListener("DOMContentLoaded", () => {
             [cLevels, cSuccess, cHelp, cRestart, cPlayTime]
         );
 
-        renderPlayerAttemptsChart(history);
     }
 
     function renderPlayerRadarChart(playerVals, communityVals) {
@@ -1269,96 +1305,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (playerRadarChart) playerRadarChart.destroy();
         playerRadarChart = new ApexCharts(document.querySelector("#modal-radar-chart"), radarOpt);
         playerRadarChart.render();
-    }
-
-    function renderPlayerAttemptsChart(history) {
-        if (!history || history.length === 0) {
-            document.querySelector("#modal-player-timeline-chart").innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                    No historical session logs recorded.
-                </div>
-            `;
-            return;
-        }
-
-        const attemptsIndices = history.map((h, i) => `Att ${i + 1} (Lvl ${h.level_id})`);
-        const userDurations = history.map(h => Math.round(h.f_duration));
-        const metaDurations = history.map(h => Math.round(h.f_avg_duration));
-
-        const timelineOpt = {
-            chart: {
-                height: 280,
-                type: 'line',
-                background: 'transparent',
-                foreColor: '#9ca3af',
-                fontFamily: 'Outfit, sans-serif',
-                toolbar: { show: false }
-            },
-            stroke: { width: [0, 3], curve: 'smooth' },
-            colors: ['#00E5FF', '#00B8D9'],
-            series: [{
-                name: 'Attempt Duration (Sec)',
-                type: 'column',
-                data: userDurations
-            }, {
-                name: 'Community Average (Sec)',
-                type: 'line',
-                data: metaDurations
-            }],
-            fill: {
-                opacity: [0.35, 1],
-                gradient: {
-                    inverseColors: false,
-                    shade: 'light',
-                    type: "vertical",
-                    opacityFrom: 0.85,
-                    opacityTo: 0.2,
-                    stops: [0, 100, 100, 100]
-                }
-            },
-            xaxis: {
-                categories: attemptsIndices,
-                labels: {
-                    show: attemptsIndices.length <= 25,
-                    rotate: -45
-                },
-                axisBorder: { show: false },
-                axisTicks: { show: false }
-            },
-            yaxis: {
-                title: { text: 'Seconds', style: { color: '#9ca3af' } }
-            },
-            grid: { borderColor: 'rgba(255, 255, 255, 0.05)', strokeDashArray: 4 },
-            tooltip: {
-                theme: 'dark',
-                shared: true,
-                intersect: false,
-                y: {
-                    formatter: function(y, { seriesIndex, dataPointIndex }) {
-                        if (typeof y !== "undefined") {
-                            if (seriesIndex === 0) {
-                                const succ = history[dataPointIndex].f_success === 1 ? "Success" : "Failed";
-                                const help = history[dataPointIndex].f_help === 1 ? "Yes" : "No";
-                                return `${y}s (${succ}) | Help: ${help}`;
-                            }
-                            return `${y}s`;
-                        }
-                        return y;
-                    }
-                }
-            },
-            plotOptions: {
-                bar: {
-                    columnWidth: '50%',
-                    borderRadius: 4,
-                    colors: { ranges: [{ from: 0, to: 10000, color: '#00E5FF' }] }
-                }
-            }
-        };
-
-        if (playerTimelineChart) playerTimelineChart.destroy();
-        playerTimelineChart = new ApexCharts(document.querySelector("#modal-player-timeline-chart"), timelineOpt);
-        playerTimelineChart.render();
     }
 
     function closePlayerProfile() {

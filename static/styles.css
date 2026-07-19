@@ -1540,6 +1540,23 @@ body {
     gap: 1rem;
 }
 
+.modal-difficulty-context {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.modal-difficulty-context .modal-card-heading {
+    margin: 0;
+}
+
+.simulator-player-context {
+    margin: 0.5rem 0 0;
+    color: var(--color-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
 .modal-stat-box {
     background-color: rgba(255, 255, 255, 0.015);
     border: 1px solid var(--border-color);

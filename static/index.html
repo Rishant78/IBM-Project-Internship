@@ -425,6 +425,7 @@
                         <div class="panel-header">
                             <h3><i class="fa-solid fa-sliders header-icon-blue"></i> Player Behavior Metrics</h3>
                             <p class="panel-desc">Adjust behavioral inputs to predict how players will engage or churn</p>
+                            <p class="simulator-player-context" id="simulator-player-context" hidden></p>
                         </div>
 
                         <form id="simulator-form" class="sim-form">
@@ -432,14 +433,14 @@
                                 <div class="form-group">
                                     <label for="sim-LevelsPlayed">Levels Played</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-LevelsPlayed" min="1" max="500" value="120">
+                                        <input type="range" id="sim-LevelsPlayed" min="1" max="5000" step="1" value="120">
                                         <span class="range-value" id="val-LevelsPlayed">120</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="sim-SuccessRate">Success Rate</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-SuccessRate" min="0" max="1" step="0.01" value="0.75">
+                                        <input type="range" id="sim-SuccessRate" min="0" max="1" step="any" value="0.75">
                                         <span class="range-value" id="val-SuccessRate">75%</span>
                                     </div>
                                 </div>
@@ -449,14 +450,14 @@
                                 <div class="form-group">
                                     <label for="sim-TotalPlayTime">Total Playtime (Min)</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-TotalPlayTime" min="1" max="1500" value="180">
+                                        <input type="range" id="sim-TotalPlayTime" min="0.1" max="10000" step="any" value="180">
                                         <span class="range-value" id="val-TotalPlayTime">180m</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="sim-HelpUsed">Help/Hints Used</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-HelpUsed" min="0" max="100" value="12">
+                                        <input type="range" id="sim-HelpUsed" min="0" max="700" step="1" value="12">
                                         <span class="range-value" id="val-HelpUsed">12</span>
                                     </div>
                                 </div>
@@ -466,14 +467,14 @@
                                 <div class="form-group">
                                     <label for="sim-RestartCount">Total Restarts (Reststep Sum)</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-RestartCount" min="0" max="150" value="30">
+                                        <input type="range" id="sim-RestartCount" min="0" max="1200" step="any" value="30">
                                         <span class="range-value" id="val-RestartCount">30</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="sim-AverageLevelDuration">Avg Level Duration (Sec)</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-AverageLevelDuration" min="10" max="600" value="120">
+                                        <input type="range" id="sim-AverageLevelDuration" min="10" max="600" step="any" value="120">
                                         <span class="range-value" id="val-AverageLevelDuration">120s</span>
                                     </div>
                                 </div>
@@ -486,14 +487,14 @@
                                 <div class="form-group">
                                     <label for="sim-AvgLevelPassRate">Avg Level Passrate</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-AvgLevelPassRate" min="0.1" max="1.0" step="0.01" value="0.78">
+                                        <input type="range" id="sim-AvgLevelPassRate" min="0.1" max="1.0" step="any" value="0.78">
                                         <span class="range-value" id="val-AvgLevelPassRate">78%</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="sim-AvgRetryRate">Avg Level Retrytimes</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-AvgRetryRate" min="0" max="3" step="0.05" value="0.55">
+                                        <input type="range" id="sim-AvgRetryRate" min="0" max="7" step="any" value="0.55">
                                         <span class="range-value" id="val-AvgRetryRate">0.55</span>
                                     </div>
                                 </div>
@@ -503,14 +504,14 @@
                                 <div class="form-group">
                                     <label for="sim-AvgMetaDuration">Avg Level Duration (Meta)</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-AvgMetaDuration" min="20" max="500" value="150">
+                                        <input type="range" id="sim-AvgMetaDuration" min="20" max="1000" step="any" value="150">
                                         <span class="range-value" id="val-AvgMetaDuration">150s</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="sim-AvgWinningDuration">Avg Win Duration (Meta)</label>
                                     <div class="range-container">
-                                        <input type="range" id="sim-AvgWinningDuration" min="20" max="500" value="130">
+                                        <input type="range" id="sim-AvgWinningDuration" min="20" max="500" step="any" value="130">
                                         <span class="range-value" id="val-AvgWinningDuration">130s</span>
                                     </div>
                                 </div>
@@ -878,10 +879,31 @@
                     </div>
                 </div>
 
-                <div class="modal-chart-card">
-                    <h4>Player Session timeline & Level Completion Durations</h4>
-                    <p class="chart-desc">Sequential play history showing successful and failed attempts vs global level average durations</p>
-                    <div id="modal-player-timeline-chart"></div>
+                <section class="modal-difficulty-context" aria-labelledby="difficulty-context-heading">
+                    <h4 class="modal-card-heading" id="difficulty-context-heading"><i class="fa-solid fa-gamepad"></i> Game Difficulty Context</h4>
+                    <div class="modal-grid-stats">
+                        <div class="modal-stat-box">
+                            <span class="m-label">Average Pass Rate</span>
+                            <span class="m-val text-emerald" id="modal-stat-avg-pass-rate">-</span>
+                        </div>
+                        <div class="modal-stat-box">
+                            <span class="m-label">Average Retry Times</span>
+                            <span class="m-val" id="modal-stat-avg-retry-rate">-</span>
+                        </div>
+                        <div class="modal-stat-box">
+                            <span class="m-label">Average Level Duration</span>
+                            <span class="m-val" id="modal-stat-avg-meta-duration">-</span>
+                        </div>
+                        <div class="modal-stat-box">
+                            <span class="m-label">Average Winning Duration</span>
+                            <span class="m-val" id="modal-stat-avg-winning-duration">-</span>
+                        </div>
+                    </div>
+                </section>
+
+                <button type="button" class="btn btn-primary btn-block" id="btn-load-player-simulator">
+                    <i class="fa-solid fa-rocket"></i> Load into Retention Simulator
+                </button>
                 </div>
             </div>
         </div>
